@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园微碳汇测算 | 校园双碳平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:'#24936E',secondary:'#1E7A5C'}}}}
+  </script>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-white min-h-screen">
+  <nav class="fixed top-0 w-full bg-white shadow px-6 py-4 flex justify-between items-center z-50">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="https://free.boltp.com/2026/05/01/69f4520b4985f.webp" alt="校徽" class="w-10 h-10 rounded-full object-cover">
+      <span class="text-2xl font-bold text-primary">校园双碳平台</span>
+    </a>
+    <div class="hidden md:flex space-x-6 font-medium">
+      <a href="index.html" class="text-gray-700 hover:text-primary transition">首页</a>
+      <a href="carbon.html" class="text-gray-700 hover:text-primary transition">碳足迹计算器</a>
+      <a href="sink.html" class="text-primary border-b-2 border-primary">校园碳汇</a>
+      <a href="market.html" class="text-gray-700 hover:text-primary transition">低碳集市</a>
+      <a href="intro.html" class="text-gray-700 hover:text-primary transition">双碳科普</a>
+    </div>
+    <div id="navBtn"></div>
+  </nav>
+
+  <div class="container mx-auto max-w-4xl bg-white rounded-2xl shadow-xl p-8 mt-28 mb-10">
+    <h2 class="text-2xl font-bold text-gray-800 text-center">校园微碳汇智能测算</h2>
+    <p class="text-gray-500 text-center mt-2">录入校园绿化数据，自动测算年固碳量 + 可视化图表</p>
+
+    <div class="w-full h-52 rounded-xl overflow-hidden mt-6">
+      <img src="https://img2.baidu.com/it/u=1183813227,1092082195&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400" class="w-full h-full object-cover">
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mt-8">
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">校园树木数量（棵）</label>
+        <input id="treeNum" type="number" value="120" class="w-full border rounded-lg px-4 py-2">
+      </div>
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">草坪面积（㎡）</label>
+        <input id="grassArea" type="number" value="800" class="w-full border rounded-lg px-4 py-2">
+      </div>
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">灌木丛数量（丛）</label>
+        <input id="bushNum" type="number" value="60" class="w-full border rounded-lg px-4 py-2">
+      </div>
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">花圃绿植面积（㎡）</label>
+        <input id="flowerArea" type="number" value="300" class="w-full border rounded-lg px-4 py-2">
+      </div>
+    </div>
+
+    <button onclick="calcSink()" class="w-full py-3 bg-primary text-white rounded-lg mt-8 text-lg">
+      开始测算碳汇
+    </button>
+
+    <div id="sinkResult" class="mt-8 hidden">
+      <div class="p-6 bg-green-50 rounded-xl">
+        <h4 class="font-bold text-lg text-gray-800">碳汇测算结果</h4>
+        <p id="sinkText" class="mt-3 text-gray-700"></p>
+      </div>
+      <div id="sinkChart" class="w-full h-72 mt-6"></div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9c5XgO7XZ7xQkF9d8c5xQZ7xQkF9d8c5x",
+      authDomain: "carbon-platform-2026.firebaseapp.com",
+      databaseURL: "https://carbon-platform-2026-default-rtdb.firebaseio.com",
+      projectId: "carbon-platform-2026",
+      storageBucket: "carbon-platform-2026.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abc123def456"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <script>
+    let sinkChart;
+    function calcSink(){
+      let tree = +document.getElementById('treeNum').value;
+      let grass = +document.getElementById('grassArea').value;
+      let bush = +document.getElementById('bushNum').value;
+      let flower = +document.getElementById('flowerArea').value;
+
+      let treeC = tree * 10.2;
+      let grassC = grass * 1.1;
+      let bushC = bush * 3.5;
+      let flowerC = flower * 0.9;
+      let totalC = treeC + grassC + bushC + flowerC;
+
+      document.getElementById('sinkResult').classList.remove('hidden');
+      document.getElementById('sinkText').innerHTML = `
+        树木年固碳：${treeC.toFixed(2)} kg<br>
+        草坪年固碳：${grassC.toFixed(2)} kg<br>
+        灌木丛年固碳：${bushC.toFixed(2)} kg<br>
+        花圃绿植年固碳：${flowerC.toFixed(2)} kg<br>
+        <span class="text-primary font-bold text-lg">校园年度总固碳量：${totalC.toFixed(2)} kg</span>
+      `;
+
+      if(!sinkChart) sinkChart = echarts.init(document.getElementById('sinkChart'));
+      sinkChart.setOption({
+        tooltip:{trigger:'axis'},
+        xAxis:{type:'category',data:['树木','草坪','灌木丛','花圃']},
+        yAxis:{type:'value',name:'固碳量(kg)'},
+        series:[{type:'bar',data:[treeC.toFixed(2),grassC.toFixed(2),bushC.toFixed(2),flowerC.toFixed(2)],itemStyle:{color:'#24936E'},barWidth:'40%'}]
+      });
+    }
+  </script>
+
+  <script>
+    function logout(){
+      localStorage.removeItem('nowUser');
+      location.href='index.html';
+    }
+    (function(){
+      let nowUser = JSON.parse(localStorage.getItem('nowUser')||'null');
+      let navBtn = document.getElementById('navBtn');
+      if(nowUser){
+        navBtn.innerHTML = `
+          <a href="profile.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">个人中心</a>
+          <a href="javascript:logout()" class="px-4 py-2 rounded-full bg-gray-500 text-white hover:bg-gray-600 transition ml-2">退出</a>
+        `;
+      }else{
+        navBtn.innerHTML = `
+          <a href="login.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">登录</a>
+          <a href="register.html" class="px-4 py-2 rounded-full bg-primary text-white hover:bg-secondary transition ml-2">注册</a>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>

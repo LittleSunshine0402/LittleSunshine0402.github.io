@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园双碳综合平台 | 首页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#24936E',
+            secondary: '#1E7A5C',
+            light: '#ECF8F3'
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .glass {
+        background: rgba(255,255,255,0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(36,147,110,0.15);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-light via-white to-green-50 min-h-screen">
+  <nav class="glass fixed w-full top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="https://free.boltp.com/2026/05/01/69f4520b4985f.webp" alt="校徽" class="w-10 h-10 rounded-full object-cover">
+        <span class="text-2xl font-bold text-primary">校园双碳平台</span>
+      </a>
+      <div class="hidden md:flex space-x-6 font-medium">
+        <a href="index.html" class="text-primary border-b-2 border-primary">首页</a>
+        <a href="carbon.html" class="text-gray-700 hover:text-primary transition">碳足迹计算器</a>
+        <a href="sink.html" class="text-gray-700 hover:text-primary transition">校园碳汇</a>
+        <a href="market.html" class="text-gray-700 hover:text-primary transition">低碳集市</a>
+        <a href="intro.html" class="text-gray-700 hover:text-primary transition">双碳科普</a>
+      </div>
+      <div id="navBtn"></div>
+    </div>
+  </nav>
+
+  <section class="pt-32 pb-20 px-6">
+    <div class="container mx-auto text-center">
+      <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-gray-800 leading-tight">
+        校园双碳综合实践平台
+      </h1>
+      <p class="text-gray-600 mt-6 text-lg max-w-2xl mx-auto">
+        个人碳足迹核算 · 校园微碳汇测算 · 闲置低碳循环 · 云端碳积分账户
+      </p>
+      <div class="mt-10 space-x-4">
+        <a href="carbon.html" class="px-8 py-3 bg-primary text-white rounded-full shadow-lg card-hover inline-block">
+          开始测算碳足迹
+        </a>
+        <a href="profile.html" class="px-8 py-3 border border-primary text-primary rounded-full card-hover inline-block">
+          个人碳积分中心
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 px-6">
+    <div class="container mx-auto grid md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-2xl shadow card-hover">
+        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-primary text-2xl">
+          <i class="fa fa-calculator"></i>
+        </div>
+        <h3 class="text-xl font-bold mt-5 text-gray-800">精细化碳足迹计算器</h3>
+        <p class="text-gray-600 mt-3">多维度选项+手动数值输入，精确计算个人二氧化碳排放量，生成专属低碳建议。</p>
+      </div>
+      <div class="bg-white p-8 rounded-2xl shadow card-hover">
+        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-primary text-2xl">
+          <i class="fa fa-tree"></i>
+        </div>
+        <h3 class="text-xl font-bold mt-5 text-gray-800">校园微碳汇可视化</h3>
+        <p class="text-gray-600 mt-3">录入校园绿化数据，自动测算固碳总量，搭配专业图表直观展示碳汇能力。</p>
+      </div>
+      <div class="bg-white p-8 rounded-2xl shadow card-hover">
+        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-primary text-2xl">
+          <i class="fa fa-exchange"></i>
+        </div>
+        <h3 class="text-xl font-bold mt-5 text-gray-800">闲置低碳循环集市</h3>
+        <p class="text-gray-600 mt-3">教辅文具闲置流转，自动折算减碳量，云端同步碳积分数据。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-gray-800 text-white py-10 text-center">
+    <p>© 2026 校园双碳综合平台 | 云端数据版 可公开使用</p>
+  </footer>
+
+  <script>
+    (function(){
+      let nowUser = JSON.parse(localStorage.getItem('nowUser')||'null');
+      let navBtn = document.getElementById('navBtn');
+      if(nowUser){
+        navBtn.innerHTML = `
+          <a href="profile.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">个人中心</a>
+          <a href="javascript:logout()" class="px-4 py-2 rounded-full bg-gray-500 text-white hover:bg-gray-600 transition ml-2">退出</a>
+        `;
+      }else{
+        navBtn.innerHTML = `
+          <a href="login.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">登录</a>
+          <a href="register.html" class="px-4 py-2 rounded-full bg-primary text-white hover:bg-secondary transition ml-2">注册</a>
+        `;
+      }
+    })();
+
+    function logout(){
+      localStorage.removeItem('nowUser');
+      location.href='index.html';
+    }
+  </script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9c5XgO7XZ7xQkF9d8c5xQZ7xQkF9d8c5x",
+      authDomain: "carbon-platform-2026.firebaseapp.com",
+      databaseURL: "https://carbon-platform-2026-default-rtdb.firebaseio.com",
+      projectId: "carbon-platform-2026",
+      storageBucket: "carbon-platform-2026.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abc123def456"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+</body>
+</html>

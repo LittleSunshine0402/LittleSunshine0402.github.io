@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>双碳科普专区 | 校园双碳平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:'#24936E',secondary:'#1E7A5C'}}}}
+  </script>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-white min-h-screen">
+  <nav class="fixed top-0 w-full bg-white shadow px-6 py-4 flex justify-between items-center z-50">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="https://free.boltp.com/2026/05/01/69f4520b4985f.webp" alt="校徽" class="w-10 h-10 rounded-full object-cover">
+      <span class="text-2xl font-bold text-primary">校园双碳平台</span>
+    </a>
+    <div class="hidden md:flex space-x-6 font-medium">
+      <a href="index.html" class="text-gray-700 hover:text-primary transition">首页</a>
+      <a href="carbon.html" class="text-gray-700 hover:text-primary transition">碳足迹计算器</a>
+      <a href="sink.html" class="text-gray-700 hover:text-primary transition">校园碳汇</a>
+      <a href="market.html" class="text-gray-700 hover:text-primary transition">低碳集市</a>
+      <a href="intro.html" class="text-primary border-b-2 border-primary">双碳科普</a>
+    </div>
+    <div id="navBtn"></div>
+  </nav>
+
+  <div class="container mx-auto max-w-4xl mb-10 mt-28">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-bold text-gray-800">双碳科普知识专区</h2>
+      <p class="text-gray-500 mt-2">看懂碳达峰、碳中和，践行校园低碳生活</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
+      <div class="w-full h-52 rounded-xl overflow-hidden mb-6">
+        <img src="https://img0.baidu.com/it/u=1834652515,3929501395&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400" class="w-full h-full object-cover">
+      </div>
+      <h3 class="text-xl font-bold text-primary mb-4"><i class="fa fa-leaf mr-2"></i>什么是双碳？</h3>
+      <p class="text-gray-600 leading-relaxed">
+        碳达峰：指二氧化碳排放量达到峰值后不再增长，逐步进入平稳下降阶段。<br><br>
+        碳中和：指个人、团体、企业在一定时间内产生的二氧化碳，通过节能减排、植树造林、碳汇吸收等方式抵消，实现二氧化碳净零排放。
+      </p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
+      <div class="w-full h-52 rounded-xl overflow-hidden mb-6">
+        <img src="https://img1.baidu.com/it/u=3313115013,1132255011&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400" class="w-full h-full object-cover">
+      </div>
+      <h3 class="text-xl font-bold text-primary mb-4"><i class="fa fa-school mr-2"></i>高中生校园双碳行动</h3>
+      <ul class="text-gray-600 space-y-3">
+        <li>✅ 步行、骑行上下学，减少机动车碳排放</li>
+        <li>✅ 节约教室用电、随手关灯关空调</li>
+        <li>✅ 减少外卖与一次性餐具使用</li>
+        <li>✅ 教辅文具闲置流转，减少新物品生产能耗</li>
+        <li>✅ 爱护校园绿植，提升校园微碳汇能力</li>
+      </ul>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <h3 class="text-xl font-bold text-primary mb-4"><i class="fa fa-line-chart mr-2"></i>日常低碳小数据</h3>
+      <ul class="text-gray-600 space-y-3">
+        <li>• 节约1度电 ≈ 减少0.785kg二氧化碳</li>
+        <li>• 一棵成年树木每年可固碳约10kg</li>
+        <li>• 闲置书本流转一次可减少约1.4kg碳排放</li>
+        <li>• 少点一次外卖可降低约2.5kg碳足迹</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="text-center py-6 text-gray-500 mt-10">
+    © 2026 校园双碳综合平台 | 云端数据版 全校共用
+  </footer>
+
+  <script>
+    function logout(){
+      localStorage.removeItem('nowUser');
+      location.href='index.html';
+    }
+    (function(){
+      let nowUser = JSON.parse(localStorage.getItem('nowUser')||'null');
+      let navBtn = document.getElementById('navBtn');
+      if(nowUser){
+        navBtn.innerHTML = `
+          <a href="profile.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">个人中心</a>
+          <a href="javascript:logout()" class="px-4 py-2 rounded-full bg-gray-500 text-white hover:bg-gray-600 transition ml-2">退出</a>
+        `;
+      }else{
+        navBtn.innerHTML = `
+          <a href="login.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">登录</a>
+          <a href="register.html" class="px-4 py-2 rounded-full bg-primary text-white hover:bg-secondary transition ml-2">注册</a>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>

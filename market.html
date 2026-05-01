@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闲置低碳集市 | 校园双碳平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:'#24936E',secondary:'#1E7A5C'}}}}
+  </script>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-white min-h-screen">
+  <nav class="fixed top-0 w-full bg-white shadow px-6 py-4 flex justify-between items-center z-50">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="https://free.boltp.com/2026/05/01/69f4520b4985f.webp" alt="校徽" class="w-10 h-10 rounded-full object-cover">
+      <span class="text-2xl font-bold text-primary">校园双碳平台</span>
+    </a>
+    <div class="hidden md:flex space-x-6 font-medium">
+      <a href="index.html" class="text-gray-700 hover:text-primary transition">首页</a>
+      <a href="carbon.html" class="text-gray-700 hover:text-primary transition">碳足迹计算器</a>
+      <a href="sink.html" class="text-gray-700 hover:text-primary transition">校园碳汇</a>
+      <a href="market.html" class="text-primary border-b-2 border-primary">低碳集市</a>
+      <a href="intro.html" class="text-gray-700 hover:text-primary transition">双碳科普</a>
+    </div>
+    <div id="navBtn"></div>
+  </nav>
+
+  <div class="container mx-auto max-w-5xl mb-10 mt-28">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-bold text-gray-800">校园闲置低碳集市</h2>
+      <p class="text-gray-500 mt-2">教辅/文具/资料闲置流转 · 每流转一件都在为减碳做贡献</p>
+      <button onclick="showPublish()" class="mt-4 px-6 py-2 bg-primary text-white rounded-lg">
+        <i class="fa fa-plus mr-1"></i> 发布闲置物品
+      </button>
+    </div>
+
+    <div id="publishBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div class="bg-white rounded-2xl p-8 w-full max-w-md">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">发布闲置</h3>
+        <input id="goodsName" placeholder="物品名称" class="w-full border rounded-lg px-4 py-2 mb-4">
+        <input id="goodsDesc" placeholder="物品简介/新旧程度" class="w-full border rounded-lg px-4 py-2 mb-4">
+        <div class="flex gap-4">
+          <button onclick="hidePublish()" class="flex-1 py-2 border rounded-lg">取消</button>
+          <button onclick="publishGoods()" class="flex-1 py-2 bg-primary text-white rounded-lg">发布</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="goodsList" class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <img src="https://img0.baidu.com/it/u=3267062834,2879512195&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h3 class="font-bold text-gray-800">高一全科教辅资料</h3>
+          <p class="text-gray-500 text-sm mt-2">9成新，知识点齐全，适合高一同步学习</p>
+          <p class="text-primary font-medium mt-3">✨ 等效减碳：1.45 kg CO₂</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <img src="https://img2.baidu.com/it/u=2029814317,2767132193&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h3 class="font-bold text-gray-800">全套文具套装</h3>
+          <p class="text-gray-500 text-sm mt-2">未拆封全新套装，含笔、笔记本、文件夹</p>
+          <p class="text-primary font-medium mt-3">✨ 等效减碳：0.85 kg CO₂</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <img src="https://img2.baidu.com/it/u=1226051313,1793028103&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h3 class="font-bold text-gray-800">高考整理错题本</h3>
+          <p class="text-gray-500 text-sm mt-2">全科分类整理，重难点清晰，直接可用</p>
+          <p class="text-primary font-medium mt-3">✨ 等效减碳：0.65 kg CO₂</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9c5XgO7XZ7xQkF9d8c5xQZ7xQkF9d8c5x",
+      authDomain: "carbon-platform-2026.firebaseapp.com",
+      databaseURL: "https://carbon-platform-2026-default-rtdb.firebaseio.com",
+      projectId: "carbon-platform-2026",
+      storageBucket: "carbon-platform-2026.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abc123def456"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <script>
+    function showPublish(){
+      document.getElementById('publishBox').classList.remove('hidden');
+    }
+    function hidePublish(){
+      document.getElementById('publishBox').classList.add('hidden');
+    }
+    function publishGoods(){
+      let name = document.getElementById('goodsName').value.trim();
+      let desc = document.getElementById('goodsDesc').value.trim();
+      if(!name||!desc) return alert('请填写完整信息');
+      let reduce = (Math.random()*1.2+0.3).toFixed(2);
+      let html = `
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <img src="https://img1.baidu.com/it/u=2787977329,1895137239&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500" class="w-full h-48 object-cover">
+          <div class="p-6">
+            <h3 class="font-bold text-gray-800">${name}</h3>
+            <p class="text-gray-500 text-sm mt-2">${desc}</p>
+            <p class="text-primary font-medium mt-3">✨ 等效减碳：${reduce} kg CO₂</p>
+          </div>
+        </div>
+      `;
+      document.getElementById('goodsList').innerHTML += html;
+      let nowUser = JSON.parse(localStorage.getItem('nowUser')||'null');
+      if(nowUser && window.addScoreAndCarbon){
+        window.addScoreAndCarbon(15,0);
+        alert('发布成功！获得15碳积分');
+      }else{
+        alert('发布成功！登录账号可累计碳积分');
+      }
+      hidePublish();
+      document.getElementById('goodsName').value='';
+      document.getElementById('goodsDesc').value='';
+    }
+  </script>
+
+  <script>
+    function logout(){
+      localStorage.removeItem('nowUser');
+      location.href='index.html';
+    }
+    (function(){
+      let nowUser = JSON.parse(localStorage.getItem('nowUser')||'null');
+      let navBtn = document.getElementById('navBtn');
+      if(nowUser){
+        navBtn.innerHTML = `
+          <a href="profile.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">个人中心</a>
+          <a href="javascript:logout()" class="px-4 py-2 rounded-full bg-gray-500 text-white hover:bg-gray-600 transition ml-2">退出</a>
+        `;
+      }else{
+        navBtn.innerHTML = `
+          <a href="login.html" class="px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition">登录</a>
+          <a href="register.html" class="px-4 py-2 rounded-full bg-primary text-white hover:bg-secondary transition ml-2">注册</a>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
